@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Download Video Dailymotion</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    padding: 40px;
+  }
+  h1 {
+    text-align: center;
+  }
+  #form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 30px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+  button {
+    padding: 12px 20px;
+    font-size: 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #218838;
+  }
+  #status {
+    margin-top: 20px;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<h1>Download Video Dailymotion</h1>
+<div id="form-container">
+  <label for="videoUrl">Masukkan URL Video Dailymotion:</label>
+  <input type="text" id="videoUrl" placeholder="contoh: https://www.dailymotion.com/video/xxxxx" />
+  <button onclick="download()">Download</button>
+  <div id="status"></div>
+</div>
+
+<script>
+  function download() {
+    const url = document.getElementById('videoUrl').value.trim();
+    const statusDiv = document.getElementById('status');
+    statusDiv.innerText='';
+
+    if (!url) {
+      statusDiv.innerText='Silakan masukkan URL.';
+      return;
+    }
+
+    statusDiv.innerText='Proses mengunduh...';
+
+    fetch('/download', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ url: url })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.success) {
+        statusDiv.innerHTML='Berhasil! <a href="'+data.downloadLink+'" target="_blank">Lihat video di sini</a>';
+      } else {
+        statusDiv.innerText='Gagal: '+data.message;
+      }
+    })
+    .catch(err => {
+      statusDiv.innerText='Error: '+err.message;
+    });
+  }
+</script>
+
+</body>
+</html>
